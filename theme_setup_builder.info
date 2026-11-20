@@ -1,0 +1,5 @@
+type = module
+name = Theme Setup Builder
+description = Export site configuration for use with the Backdrop Theme Setup library.
+package = Development
+backdrop = 1.x

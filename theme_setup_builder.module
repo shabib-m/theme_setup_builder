@@ -1,0 +1,99 @@
+
+<?php
+
+/**
+ * @file
+ * Provides tools for exporting theme setup configuration.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function theme_setup_builder_menu() {
+  $items = array();
+  $base = 'admin/config/development/theme-setup-builder';
+
+  // Main administration page.
+  $items[$base] = array(
+    'title' => 'Theme Setup Builder',
+    'description' => 'Export configuration for theme setup.',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('theme_setup_builder_config_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'theme_setup_builder.admin.inc',
+  );
+
+  // Primary tab: Config.
+  $items[$base . '/config'] = array(
+    'title' => 'Config',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 0,
+  );
+
+    // Primary tab: Settings Content.
+    $items[$base . '/settings-content'] = array(
+    'title' => 'Settings Content',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('theme_setup_builder_modules_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'theme_setup_builder.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+    );
+
+
+    $config_tabs = array(
+    'content-types' => 'Content types',
+    'taxonomy' => 'Taxonomy',
+    'menus' => 'Menus',
+    'image-styles' => 'Image styles',
+    'text-formats' => 'Text formats',
+    'custom-blocks' => 'Custom blocks',
+    'views' => 'Views',
+    'layouts' => 'layout',
+    );
+
+    $weight = 0;
+
+    foreach ($config_tabs as $path => $title) {
+    $items[$base . '/config/' . $path] = array(
+        'title' => $title,
+        'page callback' => 'theme_setup_builder_config_tab_page',
+        'page arguments' => array($path),
+        'access arguments' => array('administer site configuration'),
+        'file' => 'theme_setup_builder.admin.inc',
+        'type' => $path === 'content-types'
+        ? MENU_DEFAULT_LOCAL_TASK
+        : MENU_LOCAL_TASK,
+        'weight' => $weight++,
+    );
+    }
+
+    // Secondary tabs under Settings Content.
+    $settings_tabs = array(
+    'modules' => 'Modules',
+    'fields' => 'Fields',
+    'taxonomy-terms' => 'Taxonomy terms',
+    'menu-links' => 'Menu links',
+    'sample-content' => 'Sample content',
+    );
+
+    $weight = 0;
+
+    foreach ($settings_tabs as $path => $title) {
+    $items[$base . '/settings-content/' . $path] = array(
+        'title' => $title,
+        'page callback' => 'theme_setup_builder_settings_tab_page',
+        'page arguments' => array($path),
+        'access arguments' => array('administer site configuration'),
+        'file' => 'theme_setup_builder.admin.inc',
+        'type' => $path === 'modules'
+        ? MENU_DEFAULT_LOCAL_TASK
+        : MENU_LOCAL_TASK,
+        'weight' => $weight++,
+    );
+    }
+
+  return $items;
+}
+
